@@ -23,7 +23,8 @@ import {
   ChevronRight,
   AlertCircle,
   Clock,
-  Tag
+  Tag,
+  Share2
 } from 'lucide-react';
 
 interface DocumentVaultProps {
@@ -79,6 +80,7 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
   const [zoom, setZoom] = useState(1);
   const [rotation, setRotation] = useState(0);
   const [versions, setVersions] = useState<any[]>([]);
+  const [shareSuccess, setShareSuccess] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const dragRef = useRef<HTMLDivElement>(null);
@@ -1020,11 +1022,28 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
                     <Download className="h-4 w-4" />
                     {t('common.download')}
                   </a>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText(selectedDoc.file_url);
+                      setShareSuccess(true);
+                      setTimeout(() => setShareSuccess(false), 2000);
+                    }}
+                    className={`flex-1 h-11 rounded-2xl border font-bold text-xs transition-all flex items-center justify-center gap-1.5 ${
+                      shareSuccess 
+                        ? 'bg-emerald-500/10 border-emerald-500 text-emerald-500 font-bold' 
+                        : 'border-input bg-card text-foreground hover:bg-muted'
+                    }`}
+                  >
+                    <Share2 className="h-4 w-4" />
+                    {shareSuccess ? 'Link Copied!' : 'Share Link'}
+                  </button>
                   
                   {isAdmin && (
                     <button
                       onClick={handleDocDelete}
-                      className="h-11 px-4 rounded-2xl bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all"
+                      className="h-11 px-4 rounded-2xl bg-destructive/10 text-destructive hover:bg-destructive/20 transition-all shrink-0"
                       title={t('common.delete')}
                     >
                       <Trash2 className="h-4.5 w-4.5" />
