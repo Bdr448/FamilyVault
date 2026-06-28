@@ -508,3 +508,9 @@ $$ LANGUAGE PLPGSQL SECURITY DEFINER;
 CREATE OR REPLACE TRIGGER on_member_birthday_sync
   AFTER INSERT OR UPDATE OR DELETE ON public.family_members
   FOR EACH ROW EXECUTE FUNCTION public.sync_birthday_event();
+
+-- 11. Pre-populate profiles for the created auth accounts
+INSERT INTO public.profiles (id, role) VALUES 
+('298c67d2-a041-4263-8fd5-5ede5aa96517', 'admin'),
+('2d619d64-9197-4f67-a0ec-d9b334ea204f', 'family')
+ON CONFLICT (id) DO NOTHING;
