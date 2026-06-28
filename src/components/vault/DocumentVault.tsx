@@ -987,6 +987,9 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
                       </div>
                       <a
                         href={getDownloadUrl(selectedDoc.file_url)}
+                        download={selectedDoc.title}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         onClick={() => {
                           dataService.incrementDownloadCount(selectedDoc.id);
                           onRefreshDocs();
@@ -1009,6 +1012,9 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
                         </div>
                         <a
                           href={getDownloadUrl(ver.file_url)}
+                          download={`${selectedDoc.title}_v${ver.version}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
                           className="p-1.5 rounded-lg border border-input bg-card text-foreground hover:bg-muted transition-all flex items-center justify-center"
                           title={t('common.download')}
                         >
@@ -1023,6 +1029,9 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
                 <div className="pt-4 border-t border-border/60 flex items-center gap-2">
                   <a
                     href={getDownloadUrl(selectedDoc.file_url)}
+                    download={selectedDoc.title}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     onClick={() => {
                       dataService.incrementDownloadCount(selectedDoc.id);
                       onRefreshDocs();
