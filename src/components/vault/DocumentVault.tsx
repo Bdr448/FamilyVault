@@ -352,29 +352,9 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
     printWin?.print();
   };
 
-  const handleDownloadFile = async (e: React.MouseEvent, fileUrl: string, fileName: string) => {
-    e.preventDefault();
-    try {
-      const response = await fetch(fileUrl);
-      const blob = await response.blob();
-      const localUrl = URL.createObjectURL(blob);
-      
-      const link = document.createElement('a');
-      link.href = localUrl;
-      link.setAttribute('download', fileName);
-      document.body.appendChild(link);
-      link.click();
-      
-      document.body.removeChild(link);
-      URL.revokeObjectURL(localUrl);
-      
-      if (selectedDoc && fileUrl === selectedDoc.file_url) {
-        await dataService.incrementDownloadCount(selectedDoc.id);
-        onRefreshDocs();
-      }
-    } catch {
-      window.open(fileUrl, '_blank');
-    }
+  const getDownloadUrl = (fileUrl: string) => {
+    if (!fileUrl) return '';
+    return fileUrl.includes('?') ? `${fileUrl}&download=` : `${fileUrl}?download=`;
   };
 
   return (
@@ -1005,12 +985,17 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
                           Uploaded by: {selectedDoc.owner_name}
                         </span>
                       </div>
-                      <button
-                        onClick={(e) => handleDownloadFile(e, selectedDoc.file_url, selectedDoc.title)}
-                        className="p-1.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/95 transition-all shadow-sm"
+                      <a
+                        href={getDownloadUrl(selectedDoc.file_url)}
+                        onClick={() => {
+                          dataService.incrementDownloadCount(selectedDoc.id);
+                          onRefreshDocs();
+                        }}
+                        className="p-1.5 rounded-lg bg-primary text-primary-foreground hover:bg-primary/95 transition-all shadow-sm flex items-center justify-center"
+                        title={t('common.download')}
                       >
                         <Download className="h-3.5 w-3.5" />
-                      </button>
+                      </a>
                     </div>
 
                     {/* Older versions */}
@@ -1022,12 +1007,13 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
                             {new Date(ver.created_at).toLocaleDateString()}
                           </span>
                         </div>
-                        <button
-                          onClick={(e) => handleDownloadFile(e, ver.file_url, `${selectedDoc.title}_v${ver.version}`)}
-                          className="p-1.5 rounded-lg border border-input bg-card text-foreground hover:bg-muted transition-all"
+                        <a
+                          href={getDownloadUrl(ver.file_url)}
+                          className="p-1.5 rounded-lg border border-input bg-card text-foreground hover:bg-muted transition-all flex items-center justify-center"
+                          title={t('common.download')}
                         >
                           <Download className="h-3.5 w-3.5" />
-                        </button>
+                        </a>
                       </div>
                     ))}
                   </div>
@@ -1035,13 +1021,17 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
 
                 {/* Actions */}
                 <div className="pt-4 border-t border-border/60 flex items-center gap-2">
-                  <button
-                    onClick={(e) => handleDownloadFile(e, selectedDoc.file_url, selectedDoc.title)}
+                  <a
+                    href={getDownloadUrl(selectedDoc.file_url)}
+                    onClick={() => {
+                      dataService.incrementDownloadCount(selectedDoc.id);
+                      onRefreshDocs();
+                    }}
                     className="flex-1 h-11 rounded-2xl bg-primary text-primary-foreground font-bold text-xs hover:bg-primary/95 transition-all shadow-md shadow-primary/10 flex items-center justify-center gap-1.5"
                   >
                     <Download className="h-4 w-4" />
                     {t('common.download')}
-                  </button>
+                  </a>
 
                   <button
                     type="button"
