@@ -282,8 +282,9 @@ export const DocumentVault: React.FC<DocumentVaultProps> = ({
       setUploadProgress(null);
       
       onRefreshDocs();
-    } catch (err) {
-      alert('Upload failed: ' + err);
+    } catch (err: any) {
+      const errMsg = err?.message || err?.error_description || err?.details || JSON.stringify(err);
+      alert('Upload failed: ' + errMsg);
       setUploadProgress(null);
     }
   };
